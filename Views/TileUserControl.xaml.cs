@@ -6,7 +6,6 @@ namespace SpaceAnalyzer.Views
 {
     public partial class TileUserControl : UserControl
     {
-        Dictionary<string, decimal> myFileSizeDatas;
         // public TilesWindow(Dictionary<string, decimal> fileSizeData)
         // {
         //     InitializeComponent();

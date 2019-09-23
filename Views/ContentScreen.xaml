@@ -1,0 +1,11 @@
+<Window x:Class="SpaceAnalyzer.Views.ContentScreen" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:SpaceAnalyzer.Views" mc:Ignorable="d" Title="{Binding Heading}" Height="600" Width="800">
+    <Grid x:Name="GridContent">
+        <ListView ItemsSource="{Binding list}" Style="{StaticResource ListViewTileStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <local:FilePreviewUserControl FileName="{Binding Name}" FileSize="{Binding Size}" FilePath="{Binding ImagePath}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Window>

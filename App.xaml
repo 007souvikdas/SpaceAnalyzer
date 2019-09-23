@@ -26,5 +26,14 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="ListView" x:Key="ListViewTileStyle">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>

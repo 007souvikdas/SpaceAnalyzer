@@ -7,9 +7,10 @@ using System.Windows.Input;
 using SpaceAnalyzer.Commands;
 using System.Threading.Tasks;
 using System.IO;
+using SpaceAnalyzer.ViewModels;
+
 public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
 {
-    public const string AllFiles = "All";
     public string currentDrive = string.Empty;
     public string CurrentDrive
     {
@@ -113,12 +114,11 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         WindowVisibility = false;
         ImageVisibility = true;
         //logic to find files in paramater object passed
-        string basePath = @"D:\git";//CurrentDrive;
-
-        (string, string)[] extensions = { ("Videos", "*.exe, *.mkv, *.flv"), ("Images", "*.jpg, *.png, *.gif"), ("Audios", "*.mp3"), ("Docs", "*.pdf, *.doc, *.docx"), (AllFiles, "") };
+        string basePath = @"C:\Users\souvikdas01\Downloads";//CurrentDrive;
+        CurrentSelectedDrive.Path = basePath;
         await Task.Run(() =>
         {
-            Dictionary<string, (string, decimal)> dict = GetFileSizesDictionary(extensions, basePath);
+            Dictionary<string, (string, decimal)> dict = GetFileSizesDictionary(ExtensionsSupported.extensions, basePath);
             if (windowChange != null)
             {
                 windowChange.Invoke(dict);

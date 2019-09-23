@@ -1,0 +1,22 @@
+<UserControl x:Class="SpaceAnalyzer.Views.FilePreviewUserControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:SpaceAnalyzer.Views" mc:Ignorable="d" d:DesignHeight="110" d:DesignWidth="100">
+    <Grid Margin="2px 2px 2px 2px">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80px"/>
+            <RowDefinition Height="30px"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100px"/>
+        </Grid.ColumnDefinitions>
+        <Image Source="{Binding FilePath ,RelativeSource={RelativeSource AncestorType=UserControl}}" 
+        ToolTip="{Binding FileName , RelativeSource={RelativeSource AncestorType=UserControl}}"
+         Stretch="Fill" Grid.Row="0" Grid.Column="1" Height="80px" Width="100px"/>
+        <Grid Grid.Row="1" Grid.Column="0" Height="30px">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="{Binding FileSize , RelativeSource={RelativeSource AncestorType=UserControl}}" Width="30px" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="5"/>
+            <Label Content="{Binding FileName , RelativeSource={RelativeSource AncestorType=UserControl}}"  Width="70px" Grid.Row="0" Grid.Column="0" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        </Grid>
+    </Grid>
+</UserControl>
