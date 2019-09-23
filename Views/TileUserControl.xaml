@@ -1,0 +1,25 @@
+<UserControl x:Class="SpaceAnalyzer.Views.TileUserControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:SpaceAnalyzer.Views" mc:Ignorable="d" d:DesignHeight="100" d:DesignWidth="100">
+    <Grid Margin="2px 2px 2px 2px" Style="{StaticResource TileStyle}"> 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label Content="{Binding ListProperty[2] , RelativeSource={RelativeSource AncestorType=UserControl}}" Grid.Row="0" Grid.Column="1" Foreground="Green" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="{Binding ListProperty[0] , RelativeSource={RelativeSource AncestorType=UserControl}}" Grid.Row="0" Grid.Column="0" FontSize="15" FontWeight="Bold" Foreground="HotPink"/>
+            <DockPanel Grid.Row="1" Grid.Column="0">
+                <TextBlock Margin="4px 0 0 2px" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" DockPanel.Dock="Bottom" Text="{Binding ListProperty[1] , RelativeSource={RelativeSource AncestorType=UserControl}}" FontSize="8"/>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</UserControl>

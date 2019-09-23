@@ -1,0 +1,33 @@
+<Window x:Class="SpaceAnalyzer.Views.HomeWindow" xmlns:gif="http://wpfanimatedgif.codeplex.com" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:SpaceAnalyzer.Views" xmlns:converters="clr-namespace:SpaceAnalyzer.Converters" mc:Ignorable="d" Title="HomeScreen" Height="300" Width="555" ResizeMode="NoResize">
+    <Window.Resources>
+        <converters:DriveComboBoxConverter x:Key="DriveBoxConverter"/>
+        <converters:PageVisibilityConverter x:Key="PageVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid Background="#e5e5e5" Visibility="{Binding Path=WindowVisibility, Converter={StaticResource PageVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="DriveComboBox" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150px" ItemsSource="{Binding DriveCollection}" SelectedItem="{Binding CurrentDrive, Mode=TwoWay, ValidatesOnDataErrors=true}">
+                <ComboBox.Style>
+                    <Style TargetType="ComboBox">
+                        <Style.Triggers>
+                            <Trigger Property="Validation.HasError" Value="true">
+                                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+            </ComboBox>
+            <TextBlock IsHitTestVisible="False" Visibility="{Binding SelectedItem, ElementName=DriveComboBox, Converter={StaticResource DriveBoxConverter}}" Foreground="gray" Text="Select a Drive:" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+            <Button Grid.Row="1" VerticalAlignment="Top" Grid.Column="0" Command="{Binding AnalyzeCommand}" CommandParameter="{Binding SelectedItem, ElementName=DriveComboBox}" Height="50px" Width="100px" Style="{StaticResource AnalyzeButton}" >Analyze</Button>
+        </Grid>
+        <Grid>
+            <Image gif:ImageBehavior.AnimatedSource="{Binding ImagePath}" Visibility="{Binding Path=ImageVisibility, Converter={StaticResource PageVisibilityConverter}}"/>
+        </Grid>
+    </Grid>
+</Window>
