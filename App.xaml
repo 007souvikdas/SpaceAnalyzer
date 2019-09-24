@@ -26,7 +26,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="ListView" x:Key="ListViewTileStyle">
+        <Style TargetType="ListBox" x:Key="ListBoxTileStyle">
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
@@ -34,6 +34,6 @@
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>       
     </Application.Resources>
 </Application>

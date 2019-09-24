@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace SpaceAnalyzer.Views
 {
@@ -47,6 +48,18 @@ namespace SpaceAnalyzer.Views
             }
         }
         public static DependencyProperty FilePathDependencyProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(FilePreviewUserControl), new PropertyMetadata(""));
+        public BitmapImage BitmapImageSource
+        {
+            get
+            {
+                return (BitmapImage)GetValue(BitmapImageSourceDependencyProperty);
+            }
+            set
+            {
+                SetValue(BitmapImageSourceDependencyProperty, value);
+            }
+        }
+        public static DependencyProperty BitmapImageSourceDependencyProperty = DependencyProperty.Register("BitmapImageSource", typeof(BitmapImage), typeof(FilePreviewUserControl), new PropertyMetadata(new BitmapImage()));
 
     }
 }

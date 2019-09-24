@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using SpaceAnalyzer.Commands;
 using SpaceAnalyzer.ViewModels;
 
@@ -73,31 +79,32 @@ public class TilesViewModel : INotifyPropertyChanged
         GridVisibility = false;
         string typeName = (string)name;
         List<FileModel> fileModels = new List<FileModel>();
+        bool isImageOrVideos = false;
         await Task.Run(() =>
         {
             string extensions = string.Empty;
             foreach (var tup in ExtensionsSupported.extensions)
             {
+                if (name.Equals(ExtensionsSupported.Images) || name.Equals(ExtensionsSupported.Videos))
+                {
+                    isImageOrVideos = true;
+                }
+
                 if (tup.Item1.Equals(name))
                 {
                     extensions = tup.Item2;
                     break;
                 }
             }
-            
-            GetFileModels(extensions,fileModels);
-            
+
+            GetAllFiles(CurrentSelectedDrive.Path, extensions.Split(","), fileModels, isImageOrVideos);
             //use the extensions to find the files
             fileModelEventHandler(typeName, fileModels);
         });
     }
-    private IEnumerable<FileModel> GetFileModels(string extensions,List<FileModel> fileModelsList)
-    {
-        GetAllFiles(CurrentSelectedDrive.Path, extensions.Split(","), fileModelsList);
-        return fileModelsList;
-    }
+
     //remove this duplicate method
-    public static void GetAllFiles(string basePath, string[] extensions, List<FileModel> fileModelsList)
+    public static void GetAllFiles(string basePath, string[] extensions, List<FileModel> fileModelsList, bool isImageOrVideos)
     {
         try
         {
@@ -105,13 +112,16 @@ public class TilesViewModel : INotifyPropertyChanged
             {
                 try
                 {
-                    foreach (string file in Directory.GetFiles(basePath, extension))
+                    extension = extension.Trim();
+                    foreach (string filePath in Directory.GetFiles(basePath, extension))
                     {
-                        FileInfo f = new FileInfo(file);
+                        FileInfo f = new FileInfo(filePath);
                         FileModel model = new FileModel();
                         model.Name = f.Name;
                         model.Size = convertBytesToRelevantSize(f.Length);
-                        model.ImagePath = file;
+                        model.ImagePath = filePath;
+                        //convert the image to bitmap image
+                        model.ImageBitmap = setImageBitmap(model.ImageBitmap, isImageOrVideos, filePath);
                         fileModelsList.Add(model);
                     }
                 }
@@ -122,7 +132,7 @@ public class TilesViewModel : INotifyPropertyChanged
             });
             foreach (string dir in Directory.GetDirectories(basePath))
             {
-                GetAllFiles(dir, extensions, fileModelsList);
+                GetAllFiles(dir, extensions, fileModelsList, isImageOrVideos);
             }
         }
         catch (Exception)
@@ -131,6 +141,41 @@ public class TilesViewModel : INotifyPropertyChanged
         }
     }
 
+    private static BitmapImage setImageBitmap(BitmapImage imageBitmap, bool isImageOrVideos, string filePath)
+    {
+        if (isImageOrVideos)
+        {
+            BitmapImage myBitmapImage = new BitmapImage();
+            myBitmapImage.BeginInit();
+            myBitmapImage.UriSource = new Uri(filePath);
+            myBitmapImage.DecodePixelWidth = 200;
+            myBitmapImage.EndInit();
+            myBitmapImage.Freeze();
+            return myBitmapImage;
+        }
+        else
+        {
+            Icon icon = SystemIcons.WinLogo;
+            icon = System.Drawing.Icon.ExtractAssociatedIcon(filePath);
+            return ToBitmapImage(icon.ToBitmap());
+        }
+    }
+    public static BitmapImage ToBitmapImage(Bitmap bitmap)
+    {
+        using (var memory = new MemoryStream())
+        {
+            bitmap.Save(memory, ImageFormat.Png);
+            memory.Position = 0;
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = memory;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            return bitmapImage;
+        }
+    }
     private Dictionary<string, List<string>> ConvertDictToList(Dictionary<string, (string, decimal)> fileSizesData)
     {
         ValueDict = new Dictionary<string, List<string>>();
