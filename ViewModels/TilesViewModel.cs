@@ -18,14 +18,33 @@ public class TilesViewModel : INotifyPropertyChanged
 {
     public delegate void listOfFileModels(string typeName, List<FileModel> fileModels);
     public event listOfFileModels fileModelEventHandler;
+    public delegate void backButtonDelegate();
+    public event backButtonDelegate BackButtonEvent;
     public Dictionary<string, List<string>> ValueDict { get; set; }
     public string ImagePath { get { return @"D:\SpaceAnalyzer\assets\octopus.gif"; } }
     public Dictionary<string, float> FileTypePercentageValue { get; set; }
     public ICommand TileClickCommand { get; set; }
+    public string BackButtonLocation { get; set; }
+    public ICommand BackButtonCommand { get; set; }
     public TilesViewModel(Dictionary<string, (string, decimal)> fileSizesData)
     {
         ConvertDictToList(fileSizesData);
         TileClickCommand = new Command(tileClickAction, tileClickCheck);
+        BackButtonLocation = @"D:\SpaceAnalyzer\assets\back.png";
+        BackButtonCommand = new Command(backButtonAction, backButtonClickCheck);
+    }
+
+    private bool backButtonClickCheck(object arg)
+    {
+        return true;
+    }
+
+    private void backButtonAction(object obj)
+    {
+        if (BackButtonEvent != null)
+        {
+            BackButtonEvent.Invoke();
+        }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -83,13 +102,12 @@ public class TilesViewModel : INotifyPropertyChanged
         await Task.Run(() =>
         {
             string extensions = string.Empty;
+            if (name.Equals(ExtensionsSupported.Images) || name.Equals(ExtensionsSupported.Videos))
+            {
+                isImageOrVideos = true;
+            }
             foreach (var tup in ExtensionsSupported.extensions)
             {
-                if (name.Equals(ExtensionsSupported.Images) || name.Equals(ExtensionsSupported.Videos))
-                {
-                    isImageOrVideos = true;
-                }
-
                 if (tup.Item1.Equals(name))
                 {
                     extensions = tup.Item2;
@@ -100,6 +118,8 @@ public class TilesViewModel : INotifyPropertyChanged
             GetAllFiles(CurrentSelectedDrive.Path, extensions.Split(","), fileModels, isImageOrVideos);
             //use the extensions to find the files
             fileModelEventHandler(typeName, fileModels);
+            TilesVisibility = false;
+            GridVisibility = true;
         });
     }
 

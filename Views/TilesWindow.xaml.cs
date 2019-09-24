@@ -15,6 +15,17 @@ namespace SpaceAnalyzer.Views
             TilesViewModel tilesViewModel = new TilesViewModel(fileSizeData);
             this.DataContext = tilesViewModel;
             tilesViewModel.fileModelEventHandler += filesListEventhandler;
+            tilesViewModel.BackButtonEvent += backButtonHandler;
+        }
+
+        private void backButtonHandler()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                HomeWindow homeWindow = new HomeWindow();
+                homeWindow.Show();
+                this.Close();
+            });
         }
 
         private void filesListEventhandler(string typeName, List<FileModel> fileModels)
@@ -23,7 +34,7 @@ namespace SpaceAnalyzer.Views
             {
                 ContentScreen contentScreen = new ContentScreen(typeName, fileModels);
                 contentScreen.Show();
-                this.Close();
+                //not closing the current window so that we can use it
             });
         }
     }

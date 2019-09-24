@@ -1,4 +1,4 @@
-<Window x:Class="SpaceAnalyzer.Views.TilesWindow" xmlns:gif="http://wpfanimatedgif.codeplex.com" xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:converters="clr-namespace:SpaceAnalyzer.Converters" xmlns:local="clr-namespace:SpaceAnalyzer.Views" mc:Ignorable="d" Title="Available Files" Height="300" Width="555" ResizeMode="NoResize">
+<Window x:Class="SpaceAnalyzer.Views.TilesWindow" xmlns:gif="http://wpfanimatedgif.codeplex.com" xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:converters="clr-namespace:SpaceAnalyzer.Converters" xmlns:local="clr-namespace:SpaceAnalyzer.Views" mc:Ignorable="d" Title="Available Files" Height="300" Width="770" ResizeMode="NoResize">
     <Window.Resources>
         <converters:PageVisibilityConverter x:Key="PageVisibilityConverter"/>
     </Window.Resources>
@@ -8,6 +8,7 @@
         </Grid>
         <Grid Background="#e5e5e5" Visibility="{Binding Path=GridVisibility, Converter={StaticResource PageVisibilityConverter}}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="24px"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -16,28 +17,41 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <local:TileUserControl ListProperty="{Binding ValueDict[Videos]}" Grid.Row="0" Grid.Column="0">
+            <DockPanel Height="20px" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Margin="2px">
+                <Image DockPanel.Dock="Top" HorizontalAlignment="Left" Source="{Binding BackButtonLocation}" Height="20px" Width="20px" ToolTip="Go Back" Style="{StaticResource BackButtonStyle}">
+                    <Image.InputBindings>
+                        <MouseBinding Gesture="LeftClick" Command="{Binding BackButtonCommand}"/>
+                    </Image.InputBindings>
+                </Image>
+            </DockPanel>
+            <local:TileUserControl ListProperty="{Binding ValueDict[Videos]}" Grid.Row="1" Grid.Column="0">
                 <local:TileUserControl.InputBindings>
                     <MouseBinding MouseAction="LeftClick" Command="{Binding TileClickCommand}" CommandParameter="Videos"/>
                 </local:TileUserControl.InputBindings>
             </local:TileUserControl>
-            <local:TileUserControl ListProperty="{Binding ValueDict[Audios]}" Grid.Row="0" Grid.Column="1">
+            <local:TileUserControl ListProperty="{Binding ValueDict[Audios]}" Grid.Row="1" Grid.Column="1">
                 <local:TileUserControl.InputBindings>
                     <MouseBinding MouseAction="LeftClick" Command="{Binding TileClickCommand}" CommandParameter="Audios"/>
                 </local:TileUserControl.InputBindings>
             </local:TileUserControl>
-            <local:TileUserControl ListProperty="{Binding ValueDict[Images]}" Grid.Row="0" Grid.Column="2">
+            <local:TileUserControl ListProperty="{Binding ValueDict[Images]}" Grid.Row="1" Grid.Column="2">
                 <local:TileUserControl.InputBindings>
                     <MouseBinding MouseAction="LeftClick" Command="{Binding TileClickCommand}" CommandParameter="Images"/>
                 </local:TileUserControl.InputBindings>
             </local:TileUserControl>
-            <local:TileUserControl ListProperty="{Binding ValueDict[Docs]}" Grid.Row="0" Grid.Column="3">
+            <local:TileUserControl ListProperty="{Binding ValueDict[Docs]}" Grid.Row="1" Grid.Column="3">
                 <local:TileUserControl.InputBindings>
                     <MouseBinding MouseAction="LeftClick" Command="{Binding TileClickCommand}" CommandParameter="Docs"/>
                 </local:TileUserControl.InputBindings>
             </local:TileUserControl>
-            <DVC:Chart Background="Transparent" BorderBrush="Transparent" Width="Auto" Height="Auto" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" LegendTitle="Type of Files:">
+            <local:TileUserControl ListProperty="{Binding ValueDict[All]}" Grid.Row="1" Grid.Column="4">
+                <local:TileUserControl.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding TileClickCommand}" CommandParameter="All"/>
+                </local:TileUserControl.InputBindings>
+            </local:TileUserControl>
+            <DVC:Chart Background="Transparent" BorderBrush="Transparent" Width="Auto" Height="Auto" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" LegendTitle="Type of Files:">
                 <DVC:Chart.Series>
                     <DVC:PieSeries Title="Files" ItemsSource="{Binding FileTypePercentageValue}" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}"></DVC:PieSeries>
                 </DVC:Chart.Series>

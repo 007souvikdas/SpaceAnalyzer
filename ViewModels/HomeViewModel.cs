@@ -155,6 +155,7 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
             {
                 try
                 {
+                    extension=extension.Trim();
                     foreach (string file in Directory.GetFiles(basePath, extension))
                     {
                         FileInfo f = new FileInfo(file);

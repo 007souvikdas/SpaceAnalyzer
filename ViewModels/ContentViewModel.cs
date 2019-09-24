@@ -12,19 +12,12 @@ namespace SpaceAnalyzer.ViewModels
         public string Heading { get; set; }
         public List<FileModel> FileModelsList { get; set; }
         public ICommand SelectedItemCommand { get; set; }
-        public ICommand BackButtonCommand { get; set; }
 
         public ContentViewModel(string typeName, List<FileModel> fileModels)
         {
             Heading = "All the " + typeName + " files are as follows:";
             FileModelsList = fileModels;
             SelectedItemCommand = new Command(selectedItemAction, canExecuteItem);
-            BackButtonCommand=new Command(backButtonAction,canExecuteItem);
-        }
-
-        private void backButtonAction(object obj)
-        {
-            MessageBox.Show("backed button pressed");
         }
 
         private void selectedItemAction(object obj)

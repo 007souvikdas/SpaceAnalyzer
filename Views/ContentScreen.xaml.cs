@@ -7,14 +7,12 @@ namespace SpaceAnalyzer.Views
 {
     public partial class ContentScreen : Window
     {
-        public ContentViewModel ContentViewModel{get;set;}
+        public ContentViewModel ContentViewModel { get; set; }
         public ContentScreen(string typeName, List<FileModel> fileModels)
         {
-            InitializeComponent();            
-            ContentViewModel=new ContentViewModel(typeName,fileModels);
+            InitializeComponent();
+            ContentViewModel = new ContentViewModel(typeName, fileModels);
             this.DataContext = ContentViewModel;
-
         }
-
     }
 }

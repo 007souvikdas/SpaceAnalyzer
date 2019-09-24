@@ -34,6 +34,13 @@
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>       
+        </Style>
+        <Style TargetType="Image" x:Key="BackButtonStyle">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>
