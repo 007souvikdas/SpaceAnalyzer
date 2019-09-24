@@ -8,6 +8,7 @@ using SpaceAnalyzer.Commands;
 using System.Threading.Tasks;
 using System.IO;
 using SpaceAnalyzer.ViewModels;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
 {
@@ -21,7 +22,7 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         set
         {
             currentDrive = value;
-            NotifyProertyChanged("CurrentDrive");
+            NotifyPropertyChanged("CurrentDrive");
         }
     }
     public delegate void EventDelegate(Dictionary<string, (string, decimal)> dict);
@@ -36,7 +37,7 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         set
         {
             imageVisibility = value;
-            NotifyProertyChanged("ImageVisibility");
+            NotifyPropertyChanged("ImageVisibility");
         }
     }
     public string ImagePath { get; set; }
@@ -50,10 +51,11 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         set
         {
             windowVisibility = value;
-            NotifyProertyChanged("WindowVisibility");
+            NotifyPropertyChanged("WindowVisibility");
         }
     }
     public ICommand AnalyzeCommand { get; set; }
+    public ICommand FolderSelector { get; set; }
     public ObservableCollection<string> DriveCollection { get; set; }
     public string Error
     {
@@ -87,10 +89,28 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         DriveCollection = GetDrivesList();
         AnalyzeCommand = new Command(AnalyzeAction, AnalyzeButtonVisibility);
         ImagePath = @"D:\SpaceAnalyzer\assets\octopus.gif";
+        FolderSelector = new Command(folderSelectorDialogAction, folderSelectorCheck);
+    }
+
+    private bool folderSelectorCheck(object arg)
+    {
+        return true;
+    }
+
+    private void folderSelectorDialogAction(object obj)
+    {
+        CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+        dialog.InitialDirectory = "C:\\";
+        dialog.IsFolderPicker = true;
+        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+            string basepath = dialog.FileName;
+            CommonCallingAction(basepath);
+        }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-    private void NotifyProertyChanged(string propName)
+    private void NotifyPropertyChanged(string propName)
     {
         if (PropertyChanged != null)
         {
@@ -109,12 +129,16 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         }
     }
 
-    public async void AnalyzeAction(object paramater)
+    public void AnalyzeAction(object paramater)
+    {
+        string basepath = (string)paramater;
+        CommonCallingAction(basepath);
+    }
+    public async void CommonCallingAction(string basePath)
     {
         WindowVisibility = false;
         ImageVisibility = true;
-        //logic to find files in paramater object passed
-        string basePath = @"C:\Users\souvikdas01\Downloads";//CurrentDrive;
+        //logic to find files in paramater object passed        
         CurrentSelectedDrive.Path = basePath;
         await Task.Run(() =>
         {
@@ -155,7 +179,7 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
             {
                 try
                 {
-                    extension=extension.Trim();
+                    extension = extension.Trim();
                     foreach (string file in Directory.GetFiles(basePath, extension))
                     {
                         FileInfo f = new FileInfo(file);

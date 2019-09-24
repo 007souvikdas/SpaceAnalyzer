@@ -8,6 +8,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition Height="50px"/>
+                <RowDefinition Height="70px"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -24,7 +26,9 @@
                 </ComboBox.Style>
             </ComboBox>
             <TextBlock IsHitTestVisible="False" Visibility="{Binding SelectedItem, ElementName=DriveComboBox, Converter={StaticResource DriveBoxConverter}}" Foreground="gray" Text="Select a Drive:" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-            <Button Grid.Row="1" VerticalAlignment="Top" Grid.Column="0" Command="{Binding AnalyzeCommand}" CommandParameter="{Binding SelectedItem, ElementName=DriveComboBox}" Height="50px" Width="100px" Style="{StaticResource AnalyzeButton}" >Analyze</Button>
+            <Button Grid.Row="1" VerticalAlignment="Top" Grid.Column="0" Command="{Binding AnalyzeCommand}" CommandParameter="{Binding SelectedItem, ElementName=DriveComboBox}" Height="50px" Width="100px" Style="{StaticResource AnalyzeButton}">Analyze</Button>
+            <Label Content="Or" HorizontalAlignment="Center" VerticalAlignment="Top" Height="30px" Width="24px" Grid.Row="2"/>
+            <Button VerticalAlignment="Top" Height="30px" Width="100px" Command="{Binding FolderSelector}" Grid.Row="3" Style="{StaticResource AnalyzeButton}"> Browse a Folder...</Button>
         </Grid>
         <Grid>
             <Image gif:ImageBehavior.AnimatedSource="{Binding ImagePath}" Visibility="{Binding Path=ImageVisibility, Converter={StaticResource PageVisibilityConverter}}"/>
