@@ -33,7 +33,6 @@ public class TilesViewModel : INotifyPropertyChanged
         BackButtonLocation = @"D:\SpaceAnalyzer\assets\back.png";
         BackButtonCommand = new Command(backButtonAction, backButtonClickCheck);
     }
-
     private bool backButtonClickCheck(object arg)
     {
         return true;
@@ -133,27 +132,29 @@ public class TilesViewModel : INotifyPropertyChanged
                 try
                 {
                     extension = extension.Trim();
-                    foreach (string filePath in Directory.GetFiles(basePath, extension))
-                    {
-                        FileInfo f = new FileInfo(filePath);
-                        FileModel model = new FileModel();
-                        model.Name = f.Name;
-                        model.Size = convertBytesToRelevantSize(f.Length);
-                        model.ImagePath = filePath;
-                        //convert the image to bitmap image
-                        model.ImageBitmap = setImageBitmap(model.ImageBitmap, isImageOrVideos, filePath);
-                        fileModelsList.Add(model);
-                    }
+                    Parallel.ForEach(Directory.GetFiles(basePath, extension), (filePath) =>
+                   {
+                       {
+                           FileInfo f = new FileInfo(filePath);
+                           FileModel model = new FileModel();
+                           model.Name = f.Name;
+                           model.Size = convertBytesToRelevantSize(f.Length);
+                           model.ImagePath = filePath;
+                           //convert the image to bitmap image
+                           model.ImageBitmap = setImageBitmap(model.ImageBitmap, isImageOrVideos, filePath);
+                           fileModelsList.Add(model);
+                       }
+                   });
                 }
                 catch (Exception)
                 {
 
                 }
             });
-            foreach (string dir in Directory.GetDirectories(basePath))
+            Parallel.ForEach(Directory.GetDirectories(basePath), (dir) =>
             {
                 GetAllFiles(dir, extensions, fileModelsList, isImageOrVideos);
-            }
+            });
         }
         catch (Exception)
         {
@@ -208,13 +209,16 @@ public class TilesViewModel : INotifyPropertyChanged
             ValueDict.Add(pair.Key, new List<string> { pair.Key, pair.Value.Item1, size });
             if (pair.Key != ExtensionsSupported.AllFiles)
             {
-                float sizeInPercent = (float)((pair.Value.Item2 / totalSize) * 100);
+                float sizeInPercent = (float)totalSize != 0.0f ? (float)((pair.Value.Item2 / totalSize) * 100) : 0;
                 FileTypePercentageValue.Add(pair.Key, sizeInPercent);
                 usedSize += sizeInPercent;
             }
             else
             {
-                FileTypePercentageValue.Add("Others", (100.0f - usedSize));
+                if (usedSize != 0.0f)
+                {
+                    FileTypePercentageValue.Add("Others", (100.0f - usedSize));
+                }
             }
         }
         return ValueDict;

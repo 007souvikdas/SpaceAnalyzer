@@ -128,7 +128,6 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
             return true;
         }
     }
-
     public void AnalyzeAction(object paramater)
     {
         string basepath = (string)paramater;
@@ -155,7 +154,7 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
         DriveCollection = new ObservableCollection<string>();
         foreach (string drive in Environment.GetLogicalDrives())
         {
-            DriveCollection.Add(drive.Replace("\\", ""));
+            DriveCollection.Add(drive.Replace("\\", @"\"));
         }
         return DriveCollection;
     }
@@ -180,11 +179,13 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
                 try
                 {
                     extension = extension.Trim();
-                    foreach (string file in Directory.GetFiles(basePath, extension))
+                    Parallel.ForEach(Directory.GetFiles(basePath, extension), (file) =>
                     {
-                        FileInfo f = new FileInfo(file);
-                        intermediate += f.Length;
-                    }
+                        {
+                            FileInfo f = new FileInfo(file);
+                            intermediate += f.Length;
+                        }
+                    });
                 }
                 catch (Exception)
                 {
@@ -202,5 +203,4 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
             // Console.WriteLine("some exception of type:" + e.Message);
         }
     }
-
 }
