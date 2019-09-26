@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.IO;
 using SpaceAnalyzer.ViewModels;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Collections.Concurrent;
+using System.Linq;
 
 public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
 {
@@ -160,15 +162,16 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
     }
     private Dictionary<string, (string, decimal)> GetFileSizesDictionary((string, string)[] arrayOfExtensions, string basePath)
     {
-        Dictionary<string, (string, decimal)> fileSizes = new Dictionary<string, (string, decimal)>();
-        foreach ((string, string) extensions in arrayOfExtensions)
+        ConcurrentDictionary<string, (string, decimal)> dictionary = new ConcurrentDictionary<string, (string, decimal)>();
+        Parallel.ForEach(arrayOfExtensions, (extensions) =>
         {
             decimal filesSize = 0;
             GetAllFiles(basePath, extensions.Item2.Split(","), ref filesSize);
-            fileSizes[extensions.Item1] = (extensions.Item2, filesSize);
-        }
-        return fileSizes;
+            dictionary.GetOrAdd(extensions.Item1, (extensions.Item2, filesSize));
+        });
+        return dictionary.ToDictionary(x => x.Key, y => y.Value);
     }
+    static object obj = new object();
     public static void GetAllFiles(string basePath, string[] extensions, ref decimal sizeVideos)
     {
         try
@@ -183,7 +186,10 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
                     {
                         {
                             FileInfo f = new FileInfo(file);
-                            intermediate += f.Length;
+                            lock (obj)
+                            {
+                                intermediate += f.Length;
+                            }
                         }
                     });
                 }

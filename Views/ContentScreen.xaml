@@ -3,8 +3,25 @@
         <Converter:PageVisibilityConverter x:Key="PageVisibilityConverter"></Converter:PageVisibilityConverter>
     </Window.Resources>
     <Grid>
-        <Grid x:Name="GridContent" Visibility="{Binding ListVisibility, Converter={StaticResource PageVisibilityConverter}}">
-            <ListBox ItemsSource="{Binding FileModelsList}"  Style="{StaticResource ListBoxTileStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25px"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0" Margin="3px">
+            <TextBox Text="{Binding SearchBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100px">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SearchBox, Mode=OneWay}" Value="Search">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </StackPanel>
+        <Grid Grid.Row="1" x:Name="GridContent" Visibility="{Binding ListVisibility, Converter={StaticResource PageVisibilityConverter}}">
+            <ListBox ItemsSource="{Binding FileModelsList}" Style="{StaticResource ListBoxTileStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <local:FilePreviewUserControl FileName="{Binding Name}" FileSize="{Binding Size}" FilePath="{Binding ImagePath}" BitmapImageSource="{Binding ImageBitmap}">
@@ -16,7 +33,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <Grid Visibility="{Binding LabelVisibility, Converter={StaticResource PageVisibilityConverter}}">
+        <Grid Grid.Row="1" Visibility="{Binding LabelVisibility, Converter={StaticResource PageVisibilityConverter}}">
             <Label Content="No Content to Show :)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="19" FontWeight="Bold"></Label>
         </Grid>
     </Grid>

@@ -8,7 +8,7 @@
         </Grid>
         <Grid Background="#e5e5e5" Visibility="{Binding Path=GridVisibility, Converter={StaticResource PageVisibilityConverter}}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="24px"/>
+                <RowDefinition Height="28px"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -19,12 +19,15 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <DockPanel Height="20px" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Margin="2px">
-                <Image DockPanel.Dock="Top" HorizontalAlignment="Left" Source="{Binding BackButtonLocation}" Height="20px" Width="20px" ToolTip="Go Back" Style="{StaticResource BackButtonStyle}">
-                    <Image.InputBindings>
-                        <MouseBinding Gesture="LeftClick" Command="{Binding BackButtonCommand}"/>
-                    </Image.InputBindings>
-                </Image>
+            <DockPanel Height="24px" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Margin="2px">
+                <StackPanel Orientation="Horizontal"  DockPanel.Dock="Top">
+                    <Image HorizontalAlignment="Left" VerticalAlignment="Center"  Source="{Binding BackButtonLocation}" Height="24px" Width="24px" ToolTip="Go Back" Style="{StaticResource BackButtonStyle}">
+                        <Image.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding BackButtonCommand}"/>
+                        </Image.InputBindings>
+                    </Image>
+                    <Label HorizontalAlignment="Right" Content="{Binding FolderSelected, Mode=OneWay}" FontSize="12"></Label>
+                </StackPanel>
             </DockPanel>
             <local:TileUserControl ListProperty="{Binding ValueDict[Videos]}" Grid.Row="1" Grid.Column="0">
                 <local:TileUserControl.InputBindings>

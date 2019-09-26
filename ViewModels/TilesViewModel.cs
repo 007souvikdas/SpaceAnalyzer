@@ -26,12 +26,15 @@ public class TilesViewModel : INotifyPropertyChanged
     public ICommand TileClickCommand { get; set; }
     public string BackButtonLocation { get; set; }
     public ICommand BackButtonCommand { get; set; }
+    public string FolderSelected { get; set; }
+
     public TilesViewModel(Dictionary<string, (string, decimal)> fileSizesData)
     {
         ConvertDictToList(fileSizesData);
         TileClickCommand = new Command(tileClickAction, tileClickCheck);
         BackButtonLocation = @"D:\SpaceAnalyzer\assets\back.png";
         BackButtonCommand = new Command(backButtonAction, backButtonClickCheck);
+        FolderSelected = "Selected Folder is: "+ CurrentSelectedDrive.Path;
     }
     private bool backButtonClickCheck(object arg)
     {
@@ -213,13 +216,10 @@ public class TilesViewModel : INotifyPropertyChanged
                 FileTypePercentageValue.Add(pair.Key, sizeInPercent);
                 usedSize += sizeInPercent;
             }
-            else
-            {
-                if (usedSize != 0.0f)
-                {
-                    FileTypePercentageValue.Add("Others", (100.0f - usedSize));
-                }
-            }
+        }
+        if (usedSize != 0.0f)
+        {
+            FileTypePercentageValue.Add("Others", (100.0f - usedSize));
         }
         return ValueDict;
     }
