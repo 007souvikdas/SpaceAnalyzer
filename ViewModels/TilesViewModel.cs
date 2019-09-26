@@ -196,7 +196,7 @@ public class TilesViewModel : INotifyPropertyChanged
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
             bitmapImage.EndInit();
             bitmapImage.Freeze();
-
+            
             return bitmapImage;
         }
     }

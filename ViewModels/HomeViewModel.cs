@@ -101,13 +101,15 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
 
     private void folderSelectorDialogAction(object obj)
     {
-        CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-        dialog.InitialDirectory = "C:\\";
-        dialog.IsFolderPicker = true;
-        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+        using (CommonOpenFileDialog dialog = new CommonOpenFileDialog())
         {
-            string basepath = dialog.FileName;
-            CommonCallingAction(basepath);
+            dialog.InitialDirectory = "C:\\";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string basepath = dialog.FileName;
+                CommonCallingAction(basepath);
+            }
         }
     }
 
@@ -185,9 +187,9 @@ public class HomeViewModel : INotifyPropertyChanged, IDataErrorInfo
                     Parallel.ForEach(Directory.GetFiles(basePath, extension), (file) =>
                     {
                         {
-                            FileInfo f = new FileInfo(file);
                             lock (obj)
                             {
+                                FileInfo f = new FileInfo(file);
                                 intermediate += f.Length;
                             }
                         }

@@ -6,19 +6,23 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using SpaceAnalyzer.Commands;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace SpaceAnalyzer.ViewModels
 {
     public class ContentViewModel : INotifyPropertyChanged
     {
         public string Heading { get; set; }
-        public List<FileModel> FileModelsList { get; set; }
-        private List<FileModel> originalFileModelsList { get; set; }
-        private List<FileModel> searchFileModelsList { get; set; }
+        public ObservableCollection<FileModel> FileModelsList { get; set; }
+        private ObservableCollection<FileModel> originalFileModelsList { get; set; }
         public ICommand SelectedItemCommand { get; set; }
+        public ICommand DeleteCommand { get; set; }
+        public ICommand FolderNavigationCommand { get; set; }
         public bool LabelVisibility { get; set; } = false;
         public bool ListVisibility { get; set; } = true;
-        string searchBox="Search";
+        public ObservableCollection<ContextMenuItem> ContextMenuItems { get; set; }
+        string searchBox = "Search";
         public string SearchBox
         {
             get
@@ -28,7 +32,7 @@ namespace SpaceAnalyzer.ViewModels
             set
             {
                 searchBox = value;
-                //modify the file models
+                //Todo: make the below call fast, it is already asynchronous, why then time?
                 ModifyFileModels(searchBox);
                 SetPropertyChanged("SearchBox");
             }
@@ -38,32 +42,34 @@ namespace SpaceAnalyzer.ViewModels
         {
             await Task.Run(() =>
             {
-                searchFileModelsList = new List<FileModel>();
+                FileModelsList = new ObservableCollection<FileModel>();
                 foreach (var model in originalFileModelsList)
                 {
-                    if (model.Name.Contains(searchBoxString,StringComparison.InvariantCultureIgnoreCase))
+                    if (model.Name.Contains(searchBoxString, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        searchFileModelsList.Add(model);
+                        FileModelsList.Add(model);
                     }
                 }
-                FileModelsList = searchFileModelsList;
-                if (FileModelsList.Count == 0)
-                {
-                    LabelVisibility = true;
-                    ListVisibility = false;
-                    SetPropertyChanged("LabelVisibility");
-                    SetPropertyChanged("ListVisibility");
-                }
-                else
-                {
-                    LabelVisibility = false;
-                    ListVisibility = true;
-                    SetPropertyChanged("LabelVisibility");
-                    SetPropertyChanged("ListVisibility");
-                }
-                SetPropertyChanged("FileModelsList");
-
+                CallNotifyChanged();
             });
+        }
+        public void CallNotifyChanged()
+        {
+            if (FileModelsList.Count == 0)
+            {
+                LabelVisibility = true;
+                ListVisibility = false;
+                SetPropertyChanged("LabelVisibility");
+                SetPropertyChanged("ListVisibility");
+            }
+            else
+            {
+                LabelVisibility = false;
+                ListVisibility = true;
+                SetPropertyChanged("LabelVisibility");
+                SetPropertyChanged("ListVisibility");
+            }
+            SetPropertyChanged("FileModelsList");
         }
 
         public void SetPropertyChanged(string propertyName)
@@ -76,14 +82,68 @@ namespace SpaceAnalyzer.ViewModels
         public ContentViewModel(string typeName, List<FileModel> fileModels)
         {
             Heading = "All the " + typeName + " files are as follows:";
-            FileModelsList = fileModels;
-            originalFileModelsList = fileModels;
+            FileModelsList = new ObservableCollection<FileModel>(fileModels);
+            originalFileModelsList = new ObservableCollection<FileModel>(fileModels);
             if (fileModels.Count == 0)
             {
                 LabelVisibility = true;
                 ListVisibility = false;
             }
             SelectedItemCommand = new Command(selectedItemAction, canExecuteItem);
+            DeleteCommand = new Command(RightClickAction, canShowRightClickView);
+            FolderNavigationCommand = new Command(FolderNavigationAction, canShowRightClickView);
+            ContextMenuItems = new ObservableCollection<ContextMenuItem>();
+            ContextMenuItems.Add(new ContextMenuItem() { Name = "Open", ContextCommand = SelectedItemCommand });
+            ContextMenuItems.Add(new ContextMenuItem() { Name = "Delete", ContextCommand = DeleteCommand });
+            ContextMenuItems.Add(new ContextMenuItem() { Name = "Go to File location", ContextCommand = FolderNavigationCommand });
+        }
+
+        private void FolderNavigationAction(object obj)
+        {
+            FileModel path = (FileModel)obj;
+            if (!string.IsNullOrEmpty(path.ImagePath))
+            {
+                try
+                {
+                    new Process
+                    {
+                        StartInfo = new ProcessStartInfo(Path.GetDirectoryName(path.ImagePath))
+                        {
+                            UseShellExecute = true
+                        }
+                    }.Start();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Some error occured while opening the file");
+                }
+            }
+        }
+
+        private void RightClickAction(object obj)
+        {
+            try
+            {
+                FileModel path = (FileModel)obj;
+                if (!string.IsNullOrEmpty(path.ImagePath))
+                {
+                    File.Delete(path.ImagePath);
+                    originalFileModelsList.Remove(path);
+                    FileModelsList.Remove(path);
+                    // originalFileModelsList.Remove(model => model.ImagePath.Equals(path));
+                    // FileModelsList.RemoveAll(model => model.ImagePath.Equals(path));
+                    CallNotifyChanged();
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Some Error occured while deleting the file.");
+            }
+        }
+
+        private bool canShowRightClickView(object arg)
+        {
+            return true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -93,13 +153,20 @@ namespace SpaceAnalyzer.ViewModels
             string filepath = (string)obj;
             if (!string.IsNullOrEmpty(filepath))
             {
-                new Process
+                try
                 {
-                    StartInfo = new ProcessStartInfo(filepath)
+                    new Process
                     {
-                        UseShellExecute = true
-                    }
-                }.Start();
+                        StartInfo = new ProcessStartInfo(filepath)
+                        {
+                            UseShellExecute = true
+                        }
+                    }.Start();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Some error occured while opening the file");
+                }
             }
         }
         private bool canExecuteItem(object arg)

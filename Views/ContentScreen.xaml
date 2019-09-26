@@ -5,14 +5,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25px"/>
-            <RowDefinition />
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0" Margin="3px">
             <TextBox Text="{Binding SearchBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100px">
                 <TextBox.Style>
                     <Style TargetType="TextBox">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding SearchBox, Mode=OneWay}" Value="Search">
+                            <DataTrigger Binding="{Binding SearchBox, Mode=OneTime}" Value="Search">
                                 <Setter Property="Opacity" Value="0.5"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -22,11 +22,22 @@
         </StackPanel>
         <Grid Grid.Row="1" x:Name="GridContent" Visibility="{Binding ListVisibility, Converter={StaticResource PageVisibilityConverter}}">
             <ListBox ItemsSource="{Binding FileModelsList}" Style="{StaticResource ListBoxTileStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ContextMenu>
+                    <ContextMenu ItemsSource="{Binding ContextMenuItems}">
+                        <ContextMenu.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Name}"/>
+                                <Setter Property="Command" Value="{Binding ContextCommand}"/>
+                                <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=SelectedItem}"/>
+                            </Style>
+                        </ContextMenu.ItemContainerStyle>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <local:FilePreviewUserControl FileName="{Binding Name}" FileSize="{Binding Size}" FilePath="{Binding ImagePath}" BitmapImageSource="{Binding ImageBitmap}">
                             <local:FilePreviewUserControl.InputBindings>
-                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.SelectedItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/>
+                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.SelectedItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/><!-- <MouseBinding Gesture="RightClick" Command="{Binding DataContext.RightClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/> -->
                             </local:FilePreviewUserControl.InputBindings>
                         </local:FilePreviewUserControl>
                     </DataTemplate>
