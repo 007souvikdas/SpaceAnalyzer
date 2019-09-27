@@ -19,10 +19,25 @@ namespace SpaceAnalyzer.ViewModels
         public ICommand SelectedItemCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand FolderNavigationCommand { get; set; }
+        public ICommand TextBoxChangeCommand { get; set; }
         public bool LabelVisibility { get; set; } = false;
         public bool ListVisibility { get; set; } = true;
         public ObservableCollection<ContextMenuItem> ContextMenuItems { get; set; }
         string searchBox = "Search";
+        string folderSelected;
+        public string FolderSelected
+        {
+            get
+            {
+                return folderSelected;
+            }
+            set
+            {
+                folderSelected = value;
+                SetPropertyChanged("FolderSelected");
+            }
+        }
+
         public string SearchBox
         {
             get
@@ -92,10 +107,28 @@ namespace SpaceAnalyzer.ViewModels
             SelectedItemCommand = new Command(selectedItemAction, canExecuteItem);
             DeleteCommand = new Command(RightClickAction, canShowRightClickView);
             FolderNavigationCommand = new Command(FolderNavigationAction, canShowRightClickView);
+            TextBoxChangeCommand = new Command(ChangeTextBoxAction, canShowRightClickView);
             ContextMenuItems = new ObservableCollection<ContextMenuItem>();
             ContextMenuItems.Add(new ContextMenuItem() { Name = "Open", ContextCommand = SelectedItemCommand });
             ContextMenuItems.Add(new ContextMenuItem() { Name = "Delete", ContextCommand = DeleteCommand });
             ContextMenuItems.Add(new ContextMenuItem() { Name = "Go to File location", ContextCommand = FolderNavigationCommand });
+            FolderSelected = "Intial selected folder is: " + CurrentSelectedDrive.Path;
+        }
+
+        private void ChangeTextBoxAction(object obj)
+        {
+            try
+            {
+                FileModel path = (FileModel)obj;
+                if (!string.IsNullOrEmpty(path.ImagePath))
+                {
+                    FolderSelected = "Selected file's folder is: " + Path.GetDirectoryName(path.ImagePath);
+                }
+            }
+            catch (Exception)
+            {
+                //log the exception if needed
+            }
         }
 
         private void FolderNavigationAction(object obj)

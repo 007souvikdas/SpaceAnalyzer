@@ -7,8 +7,13 @@
             <RowDefinition Height="25px"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0" Margin="3px">
-            <TextBox Text="{Binding SearchBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100px">
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="3px" HorizontalAlignment="Stretch" Text="{Binding FolderSelected}" FontSize="10" IsReadOnly="true"/>
+            <TextBox Grid.Column="1" Margin="3px" HorizontalAlignment="Stretch" Text="{Binding SearchBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Style>
                     <Style TargetType="TextBox">
                         <Style.Triggers>
@@ -19,7 +24,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-        </StackPanel>
+        </Grid>
         <Grid Grid.Row="1" x:Name="GridContent" Visibility="{Binding ListVisibility, Converter={StaticResource PageVisibilityConverter}}">
             <ListBox ItemsSource="{Binding FileModelsList}" Style="{StaticResource ListBoxTileStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ContextMenu>
@@ -37,7 +42,8 @@
                     <DataTemplate>
                         <local:FilePreviewUserControl FileName="{Binding Name}" FileSize="{Binding Size}" FilePath="{Binding ImagePath}" BitmapImageSource="{Binding ImageBitmap}">
                             <local:FilePreviewUserControl.InputBindings>
-                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.SelectedItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding .}"/><!-- <MouseBinding Gesture="RightClick" Command="{Binding DataContext.RightClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/> -->
+                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.SelectedItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding .}"/>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding DataContext.TextBoxChangeCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding .}"/>
                             </local:FilePreviewUserControl.InputBindings>
                         </local:FilePreviewUserControl>
                     </DataTemplate>
