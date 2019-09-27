@@ -8,6 +8,8 @@ using System.Windows.Input;
 using SpaceAnalyzer.Commands;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace SpaceAnalyzer.ViewModels
 {
@@ -53,9 +55,24 @@ namespace SpaceAnalyzer.ViewModels
             }
         }
 
-        private async void ModifyFileModels(string searchBoxString)
+        // private async void ModifyFileModels(string searchBoxString)
+        // {
+        //     await Task.Run(() =>
+        //     {
+        //         FileModelsList = new ObservableCollection<FileModel>();
+        //         foreach (var model in originalFileModelsList)
+        //         {
+        //             if (model.Name.Contains(searchBoxString, StringComparison.InvariantCultureIgnoreCase))
+        //             {
+        //                 FileModelsList.Add(model);
+        //             }
+        //         }
+        //         CallNotifyChanged();
+        //     });
+        // }
+        private void ModifyFileModels(string searchBoxString)
         {
-            await Task.Run(() =>
+            Thread thread = new Thread(() =>
             {
                 FileModelsList = new ObservableCollection<FileModel>();
                 foreach (var model in originalFileModelsList)
@@ -65,8 +82,10 @@ namespace SpaceAnalyzer.ViewModels
                         FileModelsList.Add(model);
                     }
                 }
+
                 CallNotifyChanged();
             });
+            thread.Start();
         }
         public void CallNotifyChanged()
         {
