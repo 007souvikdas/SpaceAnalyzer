@@ -113,7 +113,7 @@ namespace SpaceAnalyzer.ViewModels
                         }
                     }.Start();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     MessageBox.Show("Some error occured while opening the file");
                 }
@@ -135,7 +135,7 @@ namespace SpaceAnalyzer.ViewModels
                     CallNotifyChanged();
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 MessageBox.Show("Some Error occured while deleting the file.");
             }
@@ -166,7 +166,7 @@ namespace SpaceAnalyzer.ViewModels
 
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show("Some error occured while opening the file");
             }
