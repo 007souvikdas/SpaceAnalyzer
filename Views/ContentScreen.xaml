@@ -37,7 +37,7 @@
                     <DataTemplate>
                         <local:FilePreviewUserControl FileName="{Binding Name}" FileSize="{Binding Size}" FilePath="{Binding ImagePath}" BitmapImageSource="{Binding ImageBitmap}">
                             <local:FilePreviewUserControl.InputBindings>
-                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.SelectedItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/><!-- <MouseBinding Gesture="RightClick" Command="{Binding DataContext.RightClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/> -->
+                                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.SelectedItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding .}"/><!-- <MouseBinding Gesture="RightClick" Command="{Binding DataContext.RightClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" CommandParameter="{Binding ImagePath}"/> -->
                             </local:FilePreviewUserControl.InputBindings>
                         </local:FilePreviewUserControl>
                     </DataTemplate>

@@ -125,6 +125,7 @@ public class TilesViewModel : INotifyPropertyChanged
         });
     }
 
+    static object obj=new object();
     //remove this duplicate method
     public static void GetAllFiles(string basePath, string[] extensions, List<FileModel> fileModelsList, bool isImageOrVideos)
     {
@@ -137,7 +138,8 @@ public class TilesViewModel : INotifyPropertyChanged
                     extension = extension.Trim();
                     Parallel.ForEach(Directory.GetFiles(basePath, extension), (filePath) =>
                    {
-                       {
+                       lock(obj)
+                       {                           
                            FileInfo f = new FileInfo(filePath);
                            FileModel model = new FileModel();
                            model.Name = f.Name;
@@ -173,6 +175,7 @@ public class TilesViewModel : INotifyPropertyChanged
             myBitmapImage.BeginInit();
             myBitmapImage.UriSource = new Uri(filePath);
             myBitmapImage.DecodePixelWidth = 200;
+            myBitmapImage.CacheOption=BitmapCacheOption.OnLoad;
             myBitmapImage.EndInit();
             myBitmapImage.Freeze();
             return myBitmapImage;

@@ -150,23 +150,25 @@ namespace SpaceAnalyzer.ViewModels
 
         private void selectedItemAction(object obj)
         {
-            string filepath = (string)obj;
-            if (!string.IsNullOrEmpty(filepath))
+            try
             {
-                try
+                FileModel fileModel = (FileModel)obj;
+                if (!string.IsNullOrEmpty(fileModel.ImagePath))
                 {
+
                     new Process
                     {
-                        StartInfo = new ProcessStartInfo(filepath)
+                        StartInfo = new ProcessStartInfo(fileModel.ImagePath)
                         {
                             UseShellExecute = true
                         }
                     }.Start();
+
                 }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Some error occured while opening the file");
-                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Some error occured while opening the file");
             }
         }
         private bool canExecuteItem(object arg)
